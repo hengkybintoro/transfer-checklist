@@ -1,0 +1,13 @@
+{
+  "listen_addr": ":8080",
+  "base_url": "http://localhost:8080",
+  "data_dir": "./data",
+  "timezone": "Asia/Jakarta",
+  "admin": {
+    "username": "admin",
+    "password": "ganti-dengan-password-kuat"
+  },
+  "session_secret": "ganti-dengan-string-acak-minimal-32-karakter",
+  "session_ttl_hours": 12,
+  "trust_proxy": false
+}

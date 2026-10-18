@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>{{if .Title}}{{.Title}} · {{end}}Transfer Checklist</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="/">Transfer Checklist</a>
+    <nav class="nav">
+      {{if .IsAdmin}}
+        <a href="/admin">Admin</a>
+        <form method="post" action="/admin/logout" class="inline">
+          <input type="hidden" name="csrf_token" value="{{.CSRF}}">
+          <button class="link" type="submit">Keluar</button>
+        </form>
+      {{else}}
+        <a href="/admin/login">Admin</a>
+      {{end}}
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  {{if .Flash}}<div class="flash" role="status">{{.Flash}}</div>{{end}}
+  {{template "content" .}}
+</main>
+<footer class="wrap foot">Data diinput sendiri oleh pengirim dan diverifikasi manual oleh admin.</footer>
+<script src="/static/app.js"></script>
+</body>
+</html>

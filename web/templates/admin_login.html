@@ -1,0 +1,18 @@
+{{define "content"}}
+<div class="card narrow">
+  <h1>Login Admin</h1>
+  <form method="post" action="/admin/login" class="form">
+    <input type="hidden" name="csrf_token" value="{{.CSRF}}">
+    <input type="hidden" name="next" value="{{.Data.Next}}">
+
+    <label for="username">Username</label>
+    <input id="username" name="username" type="text" autocomplete="username" required autofocus value="{{.Data.Username}}">
+
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" autocomplete="current-password" required>
+
+    {{if .Data.Error}}<div class="err">{{.Data.Error}}</div>{{end}}
+    <button type="submit" class="btn btn-primary">Masuk</button>
+  </form>
+</div>
+{{end}}

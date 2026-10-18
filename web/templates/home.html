@@ -1,0 +1,24 @@
+{{define "content"}}
+<h1>Event Aktif</h1>
+<p class="muted">Pilih event yang sesuai untuk mencatat transfer Anda atau melihat status verifikasinya.</p>
+
+{{if not .Data.Events}}
+  <div class="card empty">Belum ada event yang aktif saat ini.</div>
+{{else}}
+  <ul class="cards">
+  {{range .Data.Events}}
+    <li class="card">
+      <a class="card-link" href="/e/{{.Event.ID}}">
+        <div class="row between">
+          <strong>{{.Event.Name}}</strong>
+          <span class="pill pill-open">Dibuka</span>
+        </div>
+        {{if .Event.Description}}<div class="desc-short">{{.Event.Description}}</div>{{end}}
+        <div class="muted">Input dibuka sampai {{dateID .Event.EndDate}}</div>
+        <div class="muted small">{{.Count}} entri · {{.ValidCount}} valid</div>
+      </a>
+    </li>
+  {{end}}
+  </ul>
+{{end}}
+{{end}}

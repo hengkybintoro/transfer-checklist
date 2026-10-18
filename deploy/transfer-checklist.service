@@ -1,0 +1,26 @@
+# Linux (systemd). Salin ke /etc/systemd/system/transfer-checklist.service
+#   sudo useradd --system --home /var/lib/transfer-checklist --shell /usr/sbin/nologin transferchecklist
+#   sudo mkdir -p /opt/transfer-checklist /etc/transfer-checklist /var/lib/transfer-checklist
+#   sudo cp config.json /etc/transfer-checklist/config.json   # data_dir: /var/lib/transfer-checklist
+#   sudo chown -R transferchecklist: /var/lib/transfer-checklist
+#   sudo chmod 600 /etc/transfer-checklist/config.json && sudo chown transferchecklist: /etc/transfer-checklist/config.json
+#   sudo systemctl daemon-reload && sudo systemctl enable --now transfer-checklist
+[Unit]
+Description=Transfer Checklist
+After=network.target
+
+[Service]
+User=transferchecklist
+ExecStart=/opt/transfer-checklist/transfer-checklist -config /etc/transfer-checklist/config.json
+Restart=on-failure
+RestartSec=3
+
+# hardening ringan
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/transfer-checklist
+
+[Install]
+WantedBy=multi-user.target

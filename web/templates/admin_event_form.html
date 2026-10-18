@@ -1,0 +1,34 @@
+{{define "content"}}
+{{$d := .Data}}
+<p class="crumb"><a href="{{$d.BackURL}}">← Kembali</a></p>
+<div class="card narrow">
+  <h1>{{if $d.Edit}}Ubah event{{else}}Event baru{{end}}</h1>
+  <form method="post" action="{{$d.Action}}" class="form" novalidate>
+    <input type="hidden" name="csrf_token" value="{{.CSRF}}">
+
+    <label for="name">Nama event</label>
+    <input id="name" name="name" type="text" maxlength="100" required value="{{$d.Form.Name}}">
+    {{if $d.Errors.name}}<div class="err">{{$d.Errors.name}}</div>{{end}}
+
+    <label for="description">Deskripsi <span class="muted">(opsional, mis. info rekening tujuan)</span></label>
+    <textarea id="description" name="description" rows="3" maxlength="300">{{$d.Form.Description}}</textarea>
+    {{if $d.Errors.description}}<div class="err">{{$d.Errors.description}}</div>{{end}}
+
+    <div class="grid2">
+      <div>
+        <label for="start_date">Tanggal mulai input</label>
+        <input id="start_date" name="start_date" type="date" required value="{{$d.Form.StartDate}}">
+        {{if $d.Errors.start_date}}<div class="err">{{$d.Errors.start_date}}</div>{{end}}
+      </div>
+      <div>
+        <label for="end_date">Tanggal selesai input</label>
+        <input id="end_date" name="end_date" type="date" required value="{{$d.Form.EndDate}}">
+        {{if $d.Errors.end_date}}<div class="err">{{$d.Errors.end_date}}</div>{{end}}
+      </div>
+    </div>
+    <p class="muted small">Form input terbuka dari tanggal mulai pukul 00:00 sampai tanggal selesai pukul 23:59 ({{$d.Timezone}}).</p>
+
+    <button type="submit" class="btn btn-primary">{{if $d.Edit}}Simpan{{else}}Buat event{{end}}</button>
+  </form>
+</div>
+{{end}}

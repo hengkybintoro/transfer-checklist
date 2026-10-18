@@ -1,0 +1,33 @@
+name: Deploy
+
+# Jalan di SELF-HOSTED runner milik sendiri (mesin yang sama dengan tempat web berjalan).
+# Gunakan repo PRIVATE: self-hosted runner di repo publik berisiko menjalankan kode dari fork.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    env:
+      # Atur lewat Settings > Secrets and variables > Actions > Variables (opsional).
+      INSTALL_DIR: ${{ vars.INSTALL_DIR || '/opt/transfer-checklist' }}
+      RESTART_CMD: ${{ vars.RESTART_CMD || 'sudo systemctl restart transfer-checklist' }}
+      HEALTH_URL: ${{ vars.HEALTH_URL || 'http://127.0.0.1:8080/healthz' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Test
+        run: go test -count=1 ./...
+      - name: Build & install & restart
+        run: bash scripts/deploy.sh

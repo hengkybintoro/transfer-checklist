@@ -1,0 +1,18 @@
+# Rahasia & data lokal
+config.json
+data/
+*.json.tmp
+*.json.bak
+
+# Build output
+/bin/
+/dist/
+/transfer-checklist
+/server
+/cmd/server/server
+*.exe
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

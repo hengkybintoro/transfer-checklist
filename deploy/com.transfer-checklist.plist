@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  macOS (launchd). Ganti USERNAME, lalu:
+    mkdir -p ~/transfer-checklist/{bin,data,logs}
+    cp config.json ~/transfer-checklist/config.json   # data_dir: /Users/USERNAME/transfer-checklist/data
+    cp deploy/com.transfer-checklist.plist ~/Library/LaunchAgents/
+    launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.transfer-checklist.plist
+  Restart setelah deploy:  launchctl kickstart -k gui/$(id -u)/com.transfer-checklist
+  (isi RESTART_CMD di repo variables dengan perintah kickstart di atas, INSTALL_DIR=~/transfer-checklist/bin)
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.transfer-checklist</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Users/USERNAME/transfer-checklist/bin/transfer-checklist</string>
+    <string>-config</string>
+    <string>/Users/USERNAME/transfer-checklist/config.json</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string>/Users/USERNAME/transfer-checklist/logs/out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/USERNAME/transfer-checklist/logs/err.log</string>
+</dict>
+</plist>

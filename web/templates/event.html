@@ -1,0 +1,75 @@
+{{define "content"}}
+{{$d := .Data}}
+<p class="crumb"><a href="/">← Event aktif</a></p>
+<div class="row between wrap-row">
+  <h1>{{$d.Event.Name}}</h1>
+  <span class="pill pill-{{$d.State.Key}}">{{$d.State.Label}}</span>
+</div>
+<p class="muted">Periode input: {{dateID $d.Event.StartDate}} – {{dateID $d.Event.EndDate}}</p>
+{{if $d.Event.Description}}<p class="desc">{{$d.Event.Description}}</p>{{end}}
+
+{{if eq $d.State.Key "open"}}
+<section class="card">
+  <h2>Catat transfer</h2>
+  <form method="post" action="/e/{{$d.Event.ID}}/entries" class="form" novalidate>
+    <input type="hidden" name="csrf_token" value="{{.CSRF}}">
+
+    <label for="name">Nama</label>
+    <input id="name" name="name" type="text" maxlength="100" autocomplete="name" required value="{{$d.Form.Name}}"{{if $d.Errors.name}} aria-invalid="true"{{end}}>
+    {{if $d.Errors.name}}<div class="err">{{$d.Errors.name}}</div>{{end}}
+
+    <label for="amount">Nominal (Rp)</label>
+    <input id="amount" name="amount" type="text" inputmode="numeric" placeholder="150000" required value="{{$d.Form.Amount}}"{{if $d.Errors.amount}} aria-invalid="true"{{end}}>
+    {{if $d.Errors.amount}}<div class="err">{{$d.Errors.amount}}</div>{{end}}
+
+    <label for="transfer_date">Tanggal transfer</label>
+    <input id="transfer_date" name="transfer_date" type="date" required min="{{$d.MinDate}}" max="{{$d.Today}}" value="{{$d.Form.TransferDate}}"{{if $d.Errors.transfer_date}} aria-invalid="true"{{end}}>
+    {{if $d.Errors.transfer_date}}<div class="err">{{$d.Errors.transfer_date}}</div>{{end}}
+
+    <label for="note">Catatan <span class="muted">(opsional)</span></label>
+    <input id="note" name="note" type="text" maxlength="200" placeholder="mis. transfer dari rekening istri" value="{{$d.Form.Note}}"{{if $d.Errors.note}} aria-invalid="true"{{end}}>
+    {{if $d.Errors.note}}<div class="err">{{$d.Errors.note}}</div>{{end}}
+
+    <button type="submit" class="btn btn-primary">Kirim</button>
+  </form>
+  <p class="muted small">Data yang sudah dikirim tidak bisa diubah. Jika salah input, kirim entri baru dan kabari admin.</p>
+</section>
+{{else if $d.Event.ClosedAt}}
+<div class="notice">Event ini sudah ditutup oleh admin pada {{timeID $d.Event.ClosedAt}}. Input tidak bisa dikirim lagi.</div>
+{{else if eq $d.State.Key "upcoming"}}
+<div class="notice">Periode input belum dibuka (mulai {{dateID $d.Event.StartDate}}).</div>
+{{else}}
+<div class="notice">Periode input sudah ditutup ({{dateID $d.Event.EndDate}}).</div>
+{{end}}
+
+<section id="entries">
+  <h2>Daftar entri</h2>
+  <p class="muted">{{$d.Summary.Total}} entri · Valid: {{$d.Summary.Valid}} ({{rupiah $d.Summary.ValidSum}})</p>
+
+  {{if $d.Entries}}
+  <input id="search" class="search" type="search" placeholder="Cari nama…" aria-label="Cari nama" autocomplete="off">
+  <table class="entries" id="entry-table">
+    <thead>
+      <tr><th>Nama</th><th class="num">Nominal</th><th>Tgl transfer</th><th>Waktu input</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+    {{range $d.Entries}}
+      <tr>
+        <td data-label="Nama">{{.Name}}</td>
+        <td data-label="Nominal" class="num">{{rupiah .Amount}}</td>
+        <td data-label="Tgl transfer">{{dateID .TransferDate}}</td>
+        <td data-label="Waktu input">{{timeID .SubmittedAt}}</td>
+        <td data-label="Status">
+          <span class="badge badge-{{.Status}}">{{statusIcon .Status}} {{.Status.Label}}</span>
+          {{if and (eq .Status "invalid") .AdminNote}}<div class="note">{{.AdminNote}}</div>{{end}}
+        </td>
+      </tr>
+    {{end}}
+    </tbody>
+  </table>
+  <p id="no-match" class="muted" hidden>Tidak ada nama yang cocok.</p>
+  {{else}}
+  <div class="card empty">Belum ada entri.</div>
+  {{end}}
+</section>
+{{end}}

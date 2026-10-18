@@ -1,0 +1,46 @@
+{{define "content"}}
+<div class="row between wrap-row">
+  <h1>Dashboard Admin</h1>
+  <a class="btn btn-primary" href="/admin/events/new">+ Event baru</a>
+</div>
+
+{{if not .Data.Events}}
+  <div class="card empty">Belum ada event. Buat event pertama untuk mulai menerima entri.</div>
+{{else}}
+<table class="entries">
+  <thead>
+    <tr><th>Event</th><th>Periode input</th><th>Status</th><th class="num">Menunggu</th><th class="num">Valid</th><th class="num">Tidak valid</th><th></th></tr>
+  </thead>
+  <tbody>
+  {{range .Data.Events}}
+    <tr>
+      <td data-label="Event"><strong>{{.Event.Name}}</strong></td>
+      <td data-label="Periode input">{{dateID .Event.StartDate}} – {{dateID .Event.EndDate}}</td>
+      <td data-label="Status"><span class="pill pill-{{.State.Key}}">{{.State.Label}}</span>{{if .Event.ClosedAt}}<div class="muted small">ditutup manual</div>{{end}}</td>
+      <td data-label="Menunggu" class="num">{{.Summary.Pending}}<div class="muted small">{{rupiah .Summary.PendingSum}}</div></td>
+      <td data-label="Valid" class="num">{{.Summary.Valid}}<div class="muted small">{{rupiah .Summary.ValidSum}}</div></td>
+      <td data-label="Tidak valid" class="num">{{.Summary.Invalid}}<div class="muted small">{{rupiah .Summary.InvalidSum}}</div></td>
+      <td class="actions-cell">
+        <a class="btn btn-sm" href="/admin/e/{{.Event.ID}}">Verifikasi</a>
+        <a class="btn btn-sm" href="/admin/e/{{.Event.ID}}/edit">Ubah</a>
+        <a class="btn btn-sm" href="/e/{{.Event.ID}}">Lihat publik</a>
+        {{if .Event.ClosedAt}}
+        <form method="post" action="/admin/e/{{.Event.ID}}/reopen" class="inline">
+          <input type="hidden" name="csrf_token" value="{{$.CSRF}}">
+          <input type="hidden" name="to" value="dashboard">
+          <button class="btn btn-sm btn-ok" type="submit">Buka kembali</button>
+        </form>
+        {{else if ne .State.Key "closed"}}
+        <form method="post" action="/admin/e/{{.Event.ID}}/close" class="inline" data-confirm="Tutup event “{{.Event.Name}}” sekarang? Form input langsung tidak tersedia untuk publik. Anda bisa membukanya kembali.">
+          <input type="hidden" name="csrf_token" value="{{$.CSRF}}">
+          <input type="hidden" name="to" value="dashboard">
+          <button class="btn btn-sm btn-bad" type="submit">Tutup</button>
+        </form>
+        {{end}}
+      </td>
+    </tr>
+  {{end}}
+  </tbody>
+</table>
+{{end}}
+{{end}}
